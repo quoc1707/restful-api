@@ -7,7 +7,7 @@ use serde::{Deserialize, Serialize};
 use std::pin::Pin;
 use uuid::Uuid;
 
-// TODO: load enocding and decoding keys once
+// TODO: load encoding and decoding keys once
 pub static KEY: [u8; 16] = *include_bytes!("../secret.key");
 
 static ONE_HOUR: i64 = 60 * 60; // in seconds
@@ -18,9 +18,23 @@ pub struct UserToken {
     pub iat: i64,
     // expiration
     pub exp: i64,
-    // data
     pub email: String,
     pub id: Uuid,
+}
+
+#[derive(Serialize, Deserialize)]
+pub struct JWTResponse {
+    pub token: String,
+    pub token_type: String,
+}
+
+impl JWTResponse {
+    pub fn new(token: String) -> Self {
+        Self {
+            token,
+            token_type: "bearer".to_string(),
+        }
+    }
 }
 
 impl UserToken {

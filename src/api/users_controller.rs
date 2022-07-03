@@ -1,10 +1,11 @@
 use crate::db::PostgresPool;
 use crate::errors::user::UserError;
-use crate::models::auth::AuthenticatedUser;
-use crate::models::jwt::UserToken;
-use crate::models::user::{LoginData, NewUser, User};
+use crate::models::{
+    auth::AuthenticatedUser,
+    jwt::{JWTResponse, UserToken},
+    user::{LoginData, NewUser, User},
+};
 use actix_web::{get, post, web, Responder};
-use serde_json::json;
 use uuid::Uuid;
 use validator::Validate;
 
@@ -78,10 +79,7 @@ async fn login(
         .unwrap()?;
 
     match UserToken::generate_token(&logged_user.id, &logged_user.email) {
-        Ok(token) => {
-            let json_data = json!({ "token": token, "token_type": "bearer" });
-            Ok(web::Json(json_data))
-        }
+        Ok(token) => Ok(web::Json(JWTResponse::new(token))),
         Err(e) => Err(e),
     }
 }
@@ -89,10 +87,7 @@ async fn login(
 #[post("/api/refresh-token")]
 async fn refresh_token(user_token: UserToken) -> Result<impl Responder, UserError> {
     match UserToken::generate_token(&user_token.id, &user_token.email) {
-        Ok(token) => {
-            let json_data = json!({ "token": token, "token_type": "bearer" });
-            Ok(web::Json(json_data))
-        }
+        Ok(token) => Ok(web::Json(JWTResponse::new(token))),
         Err(e) => Err(e),
     }
 }

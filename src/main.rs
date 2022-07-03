@@ -12,14 +12,13 @@ mod tests;
 
 use crate::db as database;
 use actix_cors::Cors;
-use actix_web::http::header::ContentType;
-use actix_web::middleware::Logger;
-use actix_web::{error, http, web, App, HttpResponse, HttpServer};
+use actix_web::{
+    error, http, http::header::ContentType, middleware::Logger, web, App, HttpResponse, HttpServer,
+};
 use dotenv::dotenv;
 use log::info;
 use serde_json::json;
-use std::env;
-use std::format;
+use std::{env, format};
 
 #[actix_web::main]
 async fn main() -> std::io::Result<()> {
